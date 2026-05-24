@@ -1,72 +1,32 @@
-// ========== НАСТРОЙКИ (ЗАМЕНИТЕ НА СВОИ) ==========
-const REPO_OWNER = 'ВАШ_ЛОГИН_GITHUB';  // 👈 ВАШ ЛОГИН
-const REPO_NAME = 'crack-track';         // 👈 НАЗВАНИЕ РЕПОЗИТОРИЯ
-const GITHUB_TOKEN = 'ВАШ_ТОКЕН';        // 👈 ПОЛУЧИТЕ НИЖЕ
+const REPO_OWNER = 'markovkafromhell';
+const REPO_NAME = 'CRACK-TRACK';
+const GITHUB_TOKEN = 'ВАШ_ТОКЕН';
 
-// АДМИН ДАННЫЕ
-const ADMIN_USERNAME = 'M4RKOVKA';
-const ADMIN_PASSWORD = 'Kabalevsky2011';
-
-// КАТЕГОРИИ
 const GAME_GENRES = ['action', 'rpg', 'strategy', 'simulator', 'indy'];
 const MOVIE_COUNTRIES = ['russia', 'usa', 'uk', 'france', 'japan', 'korea', 'other'];
 
 const GENRE_NAMES = {
-    action: '🎮 ЭКШЕН', rpg: '📖 RPG', strategy: '♟️ СТРАТЕГИИ',
-    simulator: '🚗 СИМУЛЯТОРЫ', indy: '🎨 ИНДИ'
+    action: 'ЭКШЕН', rpg: 'RPG', strategy: 'СТРАТЕГИИ',
+    simulator: 'СИМУЛЯТОРЫ', indy: 'ИНДИ'
 };
 
 const COUNTRY_NAMES = {
-    russia: '🇷🇺 РОССИЯ', usa: '🇺🇸 США', uk: '🇬🇧 ВЕЛИКОБРИТАНИЯ',
-    france: '🇫🇷 ФРАНЦИЯ', japan: '🇯🇵 ЯПОНИЯ', korea: '🇰🇷 КОРЕЯ', other: '🌍 ДРУГИЕ'
+    russia: 'РОССИЯ', usa: 'США', uk: 'ВЕЛИКОБРИТАНИЯ',
+    france: 'ФРАНЦИЯ', japan: 'ЯПОНИЯ', korea: 'КОРЕЯ', other: 'ДРУГИЕ'
 };
 
-// ========== ЗАГРУЗКА ДАННЫХ ==========
 async function loadTorrents() {
     try {
         const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/torrents.json`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Файл не найден');
+        if (!response.ok) throw new Error('Ошибка загрузки');
         return await response.json();
     } catch (error) {
-        console.error('Ошибка загрузки:', error);
+        console.error('Ошибка:', error);
         return { games: {}, movies: {} };
     }
 }
 
-// ========== СОХРАНЕНИЕ В GITHUB ==========
-async function saveTorrents(data, commitMessage) {
-    try {
-        const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/torrents.json`;
-        const response = await fetch(url, {
-            headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-        });
-        const fileData = await response.json();
-        
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-        
-        const updateResponse = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: commitMessage,
-                content: content,
-                sha: fileData.sha
-            })
-        });
-        
-        if (!updateResponse.ok) throw new Error('Ошибка сохранения');
-        return true;
-    } catch (error) {
-        console.error('Ошибка:', error);
-        return false;
-    }
-}
-
-// ========== ОТОБРАЖЕНИЕ ИГР ==========
 async function displayGames() {
     const container = document.getElementById('games-container');
     if (!container) return;
@@ -74,13 +34,16 @@ async function displayGames() {
     const data = await loadTorrents();
     container.innerHTML = '';
     
+    let found = false;
+    
     for (const genre of GAME_GENRES) {
         const games = data.games?.[genre] || [];
         if (games.length === 0) continue;
         
+        found = true;
         const section = document.createElement('div');
         section.className = 'genre-section';
-        section.innerHTML = `<h3>${GENRE_NAMES[genre]}</h3><div class="torrents-list"></div>`;
+        section.innerHTML = `<h3><i class="fas fa-gamepad"></i> ${GENRE_NAMES[genre]}</h3><div class="torrents-list"></div>`;
         
         const list = section.querySelector('.torrents-list');
         games.forEach(game => {
@@ -89,18 +52,21 @@ async function displayGames() {
             item.innerHTML = `
                 <div class="torrent-info">
                     <div class="torrent-title">🎮 ${game.title}</div>
-                    <div class="torrent-meta">👤 ${game.added_by || 'anon'} | 📅 ${game.date || 'недавно'}</div>
-                    ${game.description ? `<div class="torrent-meta">📝 ${game.description.substring(0, 100)}</div>` : ''}
+                    <div class="torrent-meta">➕ ${game.added_by || 'M4RKOVKA'} | 📅 ${game.date || 'недавно'}</div>
+                    ${game.description ? `<div class="torrent-desc">📝 ${game.description}</div>` : ''}
                 </div>
-                <a href="${game.magnet}" class="magnet-link"><i class="fas fa-magnet"></i> МАГНЕТ</a>
+                <a href="${game.magnet}" class="magnet-link" target="_blank"><i class="fas fa-magnet"></i> МАГНЕТ</a>
             `;
             list.appendChild(item);
         });
         container.appendChild(section);
     }
+    
+    if (!found) {
+        container.innerHTML = '<div class="info-box">😢 ПОКА НЕТ РАЗДАЧ В ЭТОМ РАЗДЕЛЕ</div>';
+    }
 }
 
-// ========== ОТОБРАЖЕНИЕ ФИЛЬМОВ ==========
 async function displayMovies() {
     const container = document.getElementById('movies-container');
     if (!container) return;
@@ -108,13 +74,16 @@ async function displayMovies() {
     const data = await loadTorrents();
     container.innerHTML = '';
     
+    let found = false;
+    
     for (const country of MOVIE_COUNTRIES) {
         const movies = data.movies?.[country] || [];
         if (movies.length === 0) continue;
         
+        found = true;
         const section = document.createElement('div');
         section.className = 'country-section';
-        section.innerHTML = `<h3>${COUNTRY_NAMES[country]}</h3><div class="torrents-list"></div>`;
+        section.innerHTML = `<h3><i class="fas fa-film"></i> ${COUNTRY_NAMES[country]}</h3><div class="torrents-list"></div>`;
         
         const list = section.querySelector('.torrents-list');
         movies.forEach(movie => {
@@ -123,18 +92,21 @@ async function displayMovies() {
             item.innerHTML = `
                 <div class="torrent-info">
                     <div class="torrent-title">🎬 ${movie.title}</div>
-                    <div class="torrent-meta">👤 ${movie.added_by || 'anon'} | 📅 ${movie.date || 'недавно'}</div>
-                    ${movie.description ? `<div class="torrent-meta">📝 ${movie.description.substring(0, 100)}</div>` : ''}
+                    <div class="torrent-meta">➕ ${movie.added_by || 'M4RKOVKA'} | 📅 ${movie.date || 'недавно'}</div>
+                    ${movie.description ? `<div class="torrent-desc">📝 ${movie.description}</div>` : ''}
                 </div>
-                <a href="${movie.magnet}" class="magnet-link"><i class="fas fa-magnet"></i> МАГНЕТ</a>
+                <a href="${movie.magnet}" class="magnet-link" target="_blank"><i class="fas fa-magnet"></i> МАГНЕТ</a>
             `;
             list.appendChild(item);
         });
         container.appendChild(section);
     }
+    
+    if (!found) {
+        container.innerHTML = '<div class="info-box">😢 ПОКА НЕТ РАЗДАЧ В ЭТОМ РАЗДЕЛЕ</div>';
+    }
 }
 
-// ========== СТАТИСТИКА ==========
 async function updateStats() {
     const data = await loadTorrents();
     let gamesCount = 0;
@@ -158,7 +130,6 @@ async function updateStats() {
     if (moviesSpan) moviesSpan.textContent = moviesCount;
 }
 
-// ========== ФОРМА ДОБАВЛЕНИЯ ==========
 function setupAddForm() {
     const form = document.getElementById('addForm');
     if (!form) return;
@@ -196,11 +167,11 @@ function setupAddForm() {
         };
         
         const messageDiv = document.getElementById('message');
-        messageDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> ОТПРАВКА...</div>';
+        messageDiv.innerHTML = '<div class="loading">ОТПРАВКА...</div>';
         
         try {
             const issueData = {
-                title: `[НОВАЯ РАЗДАЧА] ${newTorrent.title}`,
+                title: `[РАЗДАЧА] ${newTorrent.title}`,
                 body: JSON.stringify({
                     type: contentType.value,
                     category: category.value,
@@ -219,37 +190,32 @@ function setupAddForm() {
             });
             
             if (response.ok) {
-                messageDiv.innerHTML = '<div class="success"><i class="fas fa-check-circle"></i> ✅ РАЗДАЧА ОТПРАВЛЕНА! ЖДИТЕ ПРОВЕРКИ АДМИНОМ</div>';
+                messageDiv.innerHTML = '<div class="success">✅ РАЗДАЧА ОТПРАВЛЕНА НА ПРОВЕРКУ!</div>';
                 form.reset();
                 updateCategories();
             } else {
                 throw new Error('Ошибка');
             }
         } catch (error) {
-            messageDiv.innerHTML = '<div class="error"><i class="fas fa-exclamation-triangle"></i> ❌ ОШИБКА! ПОПРОБУЙТЕ ПОЗЖЕ</div>';
+            messageDiv.innerHTML = '<div class="error">❌ ОШИБКА! ПОПРОБУЙТЕ ПОЗЖЕ</div>';
         }
     });
 }
-
-// ========== АДМИН-ПАНЕЛЬ ==========
-let currentAdminSession = false;
 
 function checkAdminLogin() {
     const username = document.getElementById('adminUsername')?.value;
     const password = document.getElementById('adminPassword')?.value;
     
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        currentAdminSession = true;
+    if (username === 'M4RKOVKA' && password === 'Kabalevsky2011') {
         document.getElementById('loginForm').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         loadAdminData();
     } else {
-        alert('❌ НЕВЕРНЫЙ ЛОГИН ИЛИ ПАРОЛЬ!');
+        alert('НЕВЕРНЫЙ ЛОГИН ИЛИ ПАРОЛЬ');
     }
 }
 
 function logout() {
-    currentAdminSession = false;
     document.getElementById('loginForm').style.display = 'block';
     document.getElementById('adminPanel').style.display = 'none';
     document.getElementById('adminUsername').value = '';
@@ -269,7 +235,7 @@ async function loadPendingIssues() {
     const issues = await response.json();
     
     if (issues.length === 0) {
-        container.innerHTML = '<div class="info-box">✨ НЕТ НОВЫХ РАЗДАЧ НА ПРОВЕРКЕ</div>';
+        container.innerHTML = '<div class="info-box">✨ НЕТ НОВЫХ РАЗДАЧ</div>';
         return;
     }
     
@@ -280,11 +246,11 @@ async function loadPendingIssues() {
         div.className = 'pending-item';
         div.innerHTML = `
             <div class="pending-title">${data.title}</div>
-            <div class="pending-meta">📁 ${data.type === 'game' ? 'ИГРА' : 'ФИЛЬМ'} | ${data.type === 'game' ? GENRE_NAMES[data.category] : COUNTRY_NAMES[data.category]}</div>
-            ${data.description ? `<div class="pending-desc">📝 ${data.description}</div>` : ''}
+            <div class="pending-meta">${data.type === 'game' ? 'ИГРА' : 'ФИЛЬМ'} | ${data.type === 'game' ? GENRE_NAMES[data.category] : COUNTRY_NAMES[data.category]}</div>
+            <div class="pending-desc">${data.description || 'Нет описания'}</div>
             <div class="pending-actions">
-                <button class="approve-btn" onclick="approveIssue(${issue.number})"><i class="fas fa-check"></i> ОДОБРИТЬ</button>
-                <button class="reject-btn" onclick="rejectIssue(${issue.number})"><i class="fas fa-times"></i> ОТКЛОНИТЬ</button>
+                <button class="approve-btn" onclick="approveIssue(${issue.number})">✅ ОДОБРИТЬ</button>
+                <button class="reject-btn" onclick="rejectIssue(${issue.number})">❌ ОТКЛОНИТЬ</button>
             </div>
         `;
         container.appendChild(div);
@@ -298,7 +264,6 @@ async function loadAllTorrents() {
     const data = await loadTorrents();
     container.innerHTML = '';
     
-    // Игры
     if (data.games) {
         for (const genre of GAME_GENRES) {
             const games = data.games[genre] || [];
@@ -308,16 +273,15 @@ async function loadAllTorrents() {
                 div.innerHTML = `
                     <div class="torrent-info">
                         <div class="torrent-title">🎮 ${game.title}</div>
-                        <div class="torrent-meta">📁 ${GENRE_NAMES[genre]}</div>
+                        <div class="torrent-meta">${GENRE_NAMES[genre]}</div>
                     </div>
-                    <button class="delete-btn" onclick="deleteTorrent('games', '${genre}', ${idx})"><i class="fas fa-trash"></i> УДАЛИТЬ</button>
+                    <button class="delete-btn" onclick="deleteTorrent('games', '${genre}', ${idx})">🗑 УДАЛИТЬ</button>
                 `;
                 container.appendChild(div);
             });
         }
     }
     
-    // Фильмы
     if (data.movies) {
         for (const country of MOVIE_COUNTRIES) {
             const movies = data.movies[country] || [];
@@ -327,9 +291,9 @@ async function loadAllTorrents() {
                 div.innerHTML = `
                     <div class="torrent-info">
                         <div class="torrent-title">🎬 ${movie.title}</div>
-                        <div class="torrent-meta">📁 ${COUNTRY_NAMES[country]}</div>
+                        <div class="torrent-meta">${COUNTRY_NAMES[country]}</div>
                     </div>
-                    <button class="delete-btn" onclick="deleteTorrent('movies', '${country}', ${idx})"><i class="fas fa-trash"></i> УДАЛИТЬ</button>
+                    <button class="delete-btn" onclick="deleteTorrent('movies', '${country}', ${idx})">🗑 УДАЛИТЬ</button>
                 `;
                 container.appendChild(div);
             });
@@ -349,8 +313,9 @@ async function approveIssue(issueNumber) {
     if (!data[type]) data[type] = {};
     if (!data[type][category]) data[type][category] = [];
     
+    const newId = Date.now();
     data[type][category].push({
-        id: Date.now(),
+        id: newId,
         title: torrentData.title,
         magnet: torrentData.magnet,
         description: torrentData.description || '',
@@ -358,7 +323,7 @@ async function approveIssue(issueNumber) {
         date: torrentData.date
     });
     
-    const saved = await saveTorrents(data, `Одобрена раздача: ${torrentData.title}`);
+    const saved = await saveTorrents(data, `Одобрена: ${torrentData.title}`);
     
     if (saved) {
         await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`, {
@@ -369,11 +334,11 @@ async function approveIssue(issueNumber) {
             },
             body: JSON.stringify({ state: 'closed' })
         });
-        alert('✅ РАЗДАЧА ОДОБРЕНА!');
+        alert('✅ РАЗДАЧА ОДОБРЕНА');
         loadAdminData();
         updateStats();
     } else {
-        alert('❌ ОШИБКА СОХРАНЕНИЯ!');
+        alert('❌ ОШИБКА');
     }
 }
 
@@ -386,12 +351,12 @@ async function rejectIssue(issueNumber) {
         },
         body: JSON.stringify({ state: 'closed' })
     });
-    alert('❌ РАЗДАЧА ОТКЛОНЕНА!');
+    alert('❌ РАЗДАЧА ОТКЛОНЕНА');
     loadAdminData();
 }
 
 async function deleteTorrent(type, category, index) {
-    if (!confirm('🗑️ УДАЛИТЬ РАЗДАЧУ?')) return;
+    if (!confirm('УДАЛИТЬ РАЗДАЧУ?')) return;
     
     const data = await loadTorrents();
     data[type][category].splice(index, 1);
@@ -399,27 +364,25 @@ async function deleteTorrent(type, category, index) {
     const saved = await saveTorrents(data, `Удалена раздача из ${type}/${category}`);
     
     if (saved) {
-        alert('✅ РАЗДАЧА УДАЛЕНА!');
+        alert('✅ РАЗДАЧА УДАЛЕНА');
         loadAdminData();
         updateStats();
     } else {
-        alert('❌ ОШИБКА УДАЛЕНИЯ!');
+        alert('❌ ОШИБКА');
     }
 }
 
-// ========== АНИМАЦИЯ КУРСОРА ==========
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('games-container')) displayGames();
+    if (document.getElementById('movies-container')) displayMovies();
+    if (document.getElementById('stats')) updateStats();
+    if (document.getElementById('addForm')) setupAddForm();
+});
+
 document.addEventListener('mousemove', (e) => {
     const glow = document.querySelector('.cursor-glow');
     if (glow) {
         glow.style.left = e.clientX + 'px';
         glow.style.top = e.clientY + 'px';
     }
-});
-
-// ========== ЗАПУСК ==========
-document.addEventListener('DOMContentLoaded', () => {
-    displayGames();
-    displayMovies();
-    updateStats();
-    setupAddForm();
 });
