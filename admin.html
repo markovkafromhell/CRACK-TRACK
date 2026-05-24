@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRACK-TRACK | Админ-панель</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="cursor-glow"></div>
+    
+    <div class="container">
+        <div class="back-btn">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> НА ГЛАВНУЮ</a>
+        </div>
+
+        <h1><i class="fas fa-crown"></i> АДМИН-ПАНЕЛЬ</h1>
+        
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> ГЛАВНАЯ</a>
+            <a href="games.html"><i class="fas fa-gamepad"></i> ИГРЫ</a>
+            <a href="movies.html"><i class="fas fa-film"></i> ФИЛЬМЫ</a>
+        </div>
+
+        <div id="loginForm" class="login-glass">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <h3>ВХОД ДЛЯ АДМИНИСТРАТОРА</h3>
+            <input type="text" id="adminUsername" placeholder="ЛОГИН">
+            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ">
+            <button onclick="checkAdminLogin()">
+                <i class="fas fa-sign-in-alt"></i> ВОЙТИ
+            </button>
+        </div>
+
+        <div id="adminPanel" style="display:none;">
+            <div class="admin-header">
+                <div class="admin-badge">
+                    <i class="fas fa-shield-alt"></i> M4RKOVKA • АДМИНИСТРАТОР
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> ВЫЙТИ
+                </button>
+            </div>
+
+            <div class="admin-section">
+                <h2><i class="fas fa-clock"></i> НА ПРОВЕРКЕ</h2>
+                <div id="pendingList" class="pending-list">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> ЗАГРУЗКА...</div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2><i class="fas fa-trash-alt"></i> УПРАВЛЕНИЕ РАЗДАЧАМИ</h2>
+                <div id="allTorrentsList" class="torrents-list">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> ЗАГРУЗКА...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

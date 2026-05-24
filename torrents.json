@@ -1,0 +1,18 @@
+{
+  "games": {
+    "action": [],
+    "rpg": [],
+    "strategy": [],
+    "simulator": [],
+    "indy": []
+  },
+  "movies": {
+    "russia": [],
+    "usa": [],
+    "uk": [],
+    "france": [],
+    "japan": [],
+    "korea": [],
+    "other": []
+  }
+}

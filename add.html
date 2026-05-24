@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRACK-TRACK | Добавить раздачу</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="cursor-glow"></div>
+    
+    <div class="container">
+        <div class="back-btn">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> НА ГЛАВНУЮ</a>
+        </div>
+
+        <h1><i class="fas fa-plus-circle"></i> ДОБАВИТЬ РАЗДАЧУ</h1>
+        
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> ГЛАВНАЯ</a>
+            <a href="games.html"><i class="fas fa-gamepad"></i> ИГРЫ</a>
+            <a href="movies.html"><i class="fas fa-film"></i> ФИЛЬМЫ</a>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <strong>КАК ЭТО РАБОТАЕТ:</strong><br>
+            1. Заполните форму<br>
+            2. Раздача уходит на проверку админу<br>
+            3. После проверки появится на сайте<br>
+            <span class="highlight">Обычно 1-24 часа</span>
+        </div>
+
+        <form id="addForm" class="glass-form">
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> ТИП КОНТЕНТА *</label>
+                <select id="contentType" required>
+                    <option value="game">🎮 ИГРА</option>
+                    <option value="movie">🎬 ФИЛЬМ</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-layer-group"></i> КАТЕГОРИЯ *</label>
+                <select id="category" required>
+                    <option value="">-- ВЫБЕРИТЕ --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-heading"></i> НАЗВАНИЕ *</label>
+                <input type="text" id="title" required placeholder="Например: Cyberpunk 2077">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-link"></i> МАГНЕТ-ССЫЛКА *</label>
+                <input type="text" id="magnet" required placeholder="magnet:?xt=urn:btih:...">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-align-left"></i> ОПИСАНИЕ (необязательно)</label>
+                <textarea id="description" rows="4" placeholder="Краткое описание..."></textarea>
+            </div>
+
+            <button type="submit">
+                <i class="fas fa-paper-plane"></i> ОТПРАВИТЬ НА ПРОВЕРКУ
+            </button>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
