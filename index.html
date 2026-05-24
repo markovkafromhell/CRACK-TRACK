@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRACK-TRACK | Админ-панель</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CRACK-TRACK | Бескорыстный обмен торрент-ссылками</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -13,55 +13,109 @@
     <div class="cursor-glow"></div>
     
     <div class="container">
-        <div class="back-btn">
-            <a href="index.html"><i class="fas fa-arrow-left"></i> НА ГЛАВНУЮ</a>
+        <!-- ПРЕДУПРЕЖДЕНИЕ -->
+        <div class="warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            ⚠️ ВСЕ РАЗДАЧИ НЕ ПРОВЕРЕНЫ! СКАЧИВАЙТЕ НА СВОЙ СТРАХ И РИСК ⚠️
+            <i class="fas fa-skull"></i>
         </div>
 
-        <h1><i class="fas fa-crown"></i> АДМИН-ПАНЕЛЬ</h1>
-        
+        <!-- ЗАГОЛОВОК -->
+        <h1>
+            <span class="glitch" data-text="CRACK-TRACK">CRACK-TRACK</span>
+        </h1>
+        <p class="subtitle">БЕСКОРЫСТНЫЙ ОБМЕН ТОРРЕНТ-МАГНЕТ ССЫЛКАМИ</p>
+
+        <!-- НАВИГАЦИЯ -->
         <div class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i> ГЛАВНАЯ</a>
             <a href="games.html"><i class="fas fa-gamepad"></i> ИГРЫ</a>
             <a href="movies.html"><i class="fas fa-film"></i> ФИЛЬМЫ</a>
+            <a href="add.html"><i class="fas fa-plus-circle"></i> ДОБАВИТЬ</a>
+            <a href="admin.html" class="admin-link"><i class="fas fa-crown"></i> АДМИН</a>
         </div>
 
-        <div id="loginForm" class="login-glass">
-            <div class="lock-icon"><i class="fas fa-lock"></i></div>
-            <h3>ВХОД ДЛЯ АДМИНИСТРАТОРА</h3>
-            <input type="text" id="adminUsername" placeholder="ЛОГИН">
-            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ">
-            <button onclick="checkAdminLogin()">
-                <i class="fas fa-sign-in-alt"></i> ВОЙТИ
-            </button>
+        <!-- ИНФОРМАЦИЯ О ПРОЕКТЕ -->
+        <div class="info-section">
+            <div class="info-card">
+                <i class="fas fa-hand-peace"></i>
+                <h3>КТО СОЗДАЛ?</h3>
+                <p>Проект создан <strong>M4RKOVKA</strong> для бескорыстного обмена торрент-ссылками.</p>
+                <p>Никакой регистрации, никаких сборов, только помощь сообществу.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fas fa-heart"></i>
+                <h3>ГЛАВНОЕ ПРАВИЛО</h3>
+                <p><strong>НЕ УДАЛЯЙТЕ СКАЧАННЫЕ РАЗДАЧИ!</strong> Чем дольше вы остаётесь на раздаче — тем больше людей смогут скачать.</p>
+                <p>Помоги сообществу — сиди на раздаче хотя бы до соотношения 1:1.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>ПОЧЕМУ БЕЗ РЕГИСТРАЦИИ?</h3>
+                <p>Анонимность — наше всё. Качайте и добавляйте раздачи без смс, почты и паролей.</p>
+                <p>Никто не собирает ваши данные. Никакой рекламы. Только торренты.</p>
+            </div>
         </div>
 
-        <div id="adminPanel" style="display:none;">
-            <div class="admin-header">
-                <div class="admin-badge">
-                    <i class="fas fa-shield-alt"></i> M4RKOVKA • АДМИНИСТРАТОР
+        <!-- ДОНАТ -->
+        <div class="donation-section">
+            <div class="donation-card">
+                <i class="fab fa-bitcoin"></i>
+                <h3>ПОДДЕРЖАТЬ ПРОЕКТ</h3>
+                <p>Серверы и домены требуют денег. Если хочешь помочь — кидай донат на развитие.</p>
+                <div class="donation-address">
+                    <i class="fas fa-coins"></i>
+                    <span class="address">TVWKBZuLrfwVV1nT7hMWMcH23Qp52AQ7mH</span>
+                    <button class="copy-btn" onclick="copyAddress()">
+                        <i class="fas fa-copy"></i> КОПИРОВАТЬ
+                    </button>
                 </div>
-                <button onclick="logout()" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> ВЫЙТИ
-                </button>
+                <p class="donation-note">💰 TRC20 (USDT / TRX) — Спасибо большое каждому, кто помогает! 🙏</p>
             </div>
+        </div>
 
-            <div class="admin-section">
-                <h2><i class="fas fa-clock"></i> НА ПРОВЕРКЕ</h2>
-                <div id="pendingList" class="pending-list">
-                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> ЗАГРУЗКА...</div>
-                </div>
+        <!-- СТАТИСТИКА -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <i class="fas fa-gamepad"></i>
+                <span id="games-count">0</span>
+                <p>ИГР</p>
             </div>
+            <div class="stat-card">
+                <i class="fas fa-film"></i>
+                <span id="movies-count">0</span>
+                <p>ФИЛЬМОВ</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <span id="users-count">∞</span>
+                <p>БЕЗ РЕГИСТРАЦИИ</p>
+            </div>
+        </div>
 
-            <div class="admin-section">
-                <h2><i class="fas fa-trash-alt"></i> УПРАВЛЕНИЕ РАЗДАЧАМИ</h2>
-                <div id="allTorrentsList" class="torrents-list">
-                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> ЗАГРУЗКА...</div>
-                </div>
-            </div>
+        <!-- ПРИЗЫВ -->
+        <div class="callout">
+            <i class="fas fa-bullhorn"></i>
+            <p><strong>ОСТАВАЙТЕСЬ НА РАЗДАЧЕ!</strong> Чем больше вы раздаёте — тем быстрее работает сайт для всех.</p>
+            <i class="fas fa-heart" style="color: #ff3366;"></i>
+        </div>
+
+        <!-- ФУТЕР -->
+        <div class="footer">
+            <p>© 2026 CRACK-TRACK — Бескорыстный обмен. M4RKOVKA</p>
+            <p>Все магнет-ссылки взяты из открытых источников. Мы ничего не храним на своих серверах.</p>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        function copyAddress() {
+            const address = 'TVWKBZuLrfwVV1nT7hMWMcH23Qp52AQ7mH';
+            navigator.clipboard.writeText(address);
+            alert('✅ Адрес скопирован! Спасибо за поддержку!');
+        }
+    </script>
 </body>
 </html>
